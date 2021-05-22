@@ -12,30 +12,25 @@ func PostRouter(r chi.Router) {
 	// get list of posts
 	r.Get("/", getIndex)
 
-	// get a single post
-	r.Get("/{id}", getPost)
-
 	// create a new post
 	r.With(AdminOnly).Post("/", createNewPost)
 
 	r.Route("/{id}", func(r chi.Router) {
-		r.Use(AdminOnly)
+		// get a single post
+		r.Get("/", getPost)
 		// update a post
-		r.Put("/", updatePost)
+		r.With(AdminOnly).Put("/", updatePost)
 		// delete a post
-		r.Delete("/", deletePost)
+		r.With(AdminOnly).Delete("/", deletePost)
 
-		// comment router
-		r.Route("/comments", CommentRouter)
+		// Comment router
+		r.Route("/commnets", CommentRouter)
 	})
 }
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
 	err := goview.Render(w, http.StatusOK, "posts/index", goview.M{
-		"title": "Index title!",
-		"add": func(a int, b int) int {
-			return a + b
-		},
+		"title":    "Index title!",
 		"Partials": []string{"posts/index"},
 	})
 	if err != nil {
@@ -44,7 +39,14 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPost(w http.ResponseWriter, r *http.Request) {
-	return
+	id := chi.URLParam(r, "id")
+	err := goview.Render(w, http.StatusOK, "posts/show", goview.M{
+		"id":       id,
+		"Partials": []string{"posts/show"},
+	})
+	if err != nil {
+		fmt.Fprintf(w, "Render show page error: %v!", err)
+	}
 }
 
 func createNewPost(w http.ResponseWriter, r *http.Request) {
