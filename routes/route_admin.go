@@ -29,9 +29,9 @@ func AdminOnly(next http.Handler) http.Handler {
 }
 
 func renderNew(w http.ResponseWriter, r *http.Request) {
-	return
+	w.Write([]byte("admin new page to add new post!"))
 }
 
 func adminIndex(w http.ResponseWriter, r *http.Request) {
-
+	w.Write([]byte("Amdin index page"))
 }

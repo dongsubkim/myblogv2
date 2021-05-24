@@ -6,4 +6,14 @@
 {{define "content"}}
     <h1>{{ .title }}</h1>
     <p>Post list...</p>
+    {{ range .posts }}
+    <div>
+        <p>Post id : {{ .Id }}</p>
+        <p>Post Uuid : {{ .Uuid }}</p>
+        <p>Post Category : {{ .Category }}</p>
+        <p>Post Content : {{ .Content }}</p>
+        <p>Post CreatedAt : {{ .CreatedAt }}</p>
+    </div>
+    <hr>
+    {{ end }}
 {{end}}

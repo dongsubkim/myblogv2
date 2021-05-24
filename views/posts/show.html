@@ -1,10 +1,27 @@
 {{define "head"}}
-    
+<link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css"
+    integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
 {{end}}
 
-
 {{define "content"}}
-    <h1>Show Page</h1>
-    <p>Post id : {{ .id }}</p>
-    <p>Post Content!</p>
+<div class="row justify-content-center">
+    <!-- Post Section -->
+    <div class="col-lg-8 mb-5">
+        <h1 class="mb-3"> uuid: {{ .post.Uuid }} </h1>
+        <p class="text-muted">Category: {{ .post.Category }} </p>
+        <p> {{ .post.Content }} </p>
+        <p class="text-muted"> Last Modified: {{ .lastModified }}</p> 
+        <a class="btn btn-sm btn-secondary" href="/post">Back</a>
+        <a href={{ printf "/post/%v/edit" .post.Uuid }} class="btn btn-sm btn-secondary">Edit</a>
+        <form action={{ printf "/post/%v/?_method=DELETE" .post.Uuid }} method="POST" class="d-inline">
+            <button class="btn btn-danger btn-sm">Delete</button>
+        </form>
+    </div>
+    <!-- Comment Section -->
+</div>
+<script>
+    for (const tb of document.querySelectorAll("table")) {
+        tb.classList.add("pure-table", "pure-table-bordered", "mb-3");
+    }
+</script>
 {{end}}
