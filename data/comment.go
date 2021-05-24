@@ -14,6 +14,11 @@ type Comment struct {
 	CreatedAt time.Time
 }
 
+type Credentials struct {
+	Password string
+	Username string
+}
+
 func (comment *Comment) CreatedAtDate() string {
 	return comment.CreatedAt.Format("06/01/02 3:04pm")
 }

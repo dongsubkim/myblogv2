@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/dongsubkim/myblogv2/data"
 	"github.com/foolin/goview"
@@ -24,6 +25,7 @@ func PostRouter(r chi.Router) {
 		// delete a post
 		r.With(AdminOnly).Delete("/", deletePost)
 
+		r.Get("/edit", renderEdit)
 		// Comment router
 		r.Route("/commnets", CommentRouter)
 	})
@@ -31,19 +33,27 @@ func PostRouter(r chi.Router) {
 
 // Get all posts
 func getIndex(w http.ResponseWriter, r *http.Request) {
-	posts, err := data.Posts()
+	var posts []data.Post
+	var err error
+	if category, ok := r.URL.Query()["category"]; ok {
+		posts, err = data.PostsByCategory(category[0])
+	} else {
+		posts, err = data.Posts()
+	}
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Cannot get posts: %v!", err))
-	} else {
-		err = goview.Render(w, http.StatusOK, "posts/index", goview.M{
-			"title":    "Index title!",
-			"posts":    posts,
-			"Partials": []string{"posts/index"},
-		})
-		if err != nil {
-			error_message(w, r, fmt.Sprintf("Render index error: %v!", err))
-			// fmt.Fprintf(w, "Render index error: %v!", err)
-		}
+		return
+	}
+	err = goview.Render(w, http.StatusOK, "posts/index", goview.M{
+		"posts":    posts,
+		"Partials": []string{"posts/index"},
+		"categories": func(categories []string) string {
+			return strings.Join(categories, ", ")
+		},
+	})
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Render index error: %v!", err))
+		return
 	}
 }
 
@@ -53,6 +63,7 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 	post, err := data.PostByUUID(uuid)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Cannot get a post: %v!", err))
+		return
 	}
 	err = goview.Render(w, http.StatusOK, "posts/show", goview.M{
 		"post":         post,
@@ -61,39 +72,65 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Render show page error: %v!", err))
-		// fmt.Fprintf(w, "Render show page error: %v!", err)
+		return
 	}
 }
 
+// create a post
 func createPost(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	uuid := r.FormValue("uuid")
-	category := []string{r.FormValue("category")}
+	r.ParseMultipartForm(10485760)
+	uuid := createUUID()
+	title := r.FormValue("title")
+	category := strings.Split(r.FormValue("category"), ", ")
 	content := r.FormValue("content")
-	err := data.CreatePost(uuid, category, content)
+	err := data.CreatePost(uuid, title, content, category)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to create a post: %v!", err))
+		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), 302)
 }
 
+// update a post
 func updatePost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	uuid := r.FormValue("uuid")
+	title := r.FormValue("title")
 	category := []string{r.FormValue("category")}
 	content := r.FormValue("content")
-	err := data.UpdatePost(uuid, category, content)
+	err := data.UpdatePost(uuid, title, content, category)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to update the post: %v!", err))
+		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), 302)
 }
 
+// delete a post
 func deletePost(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
 	err := data.DeletePost(uuid)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to delete the post: %v!", err))
+		return
 	}
 	http.Redirect(w, r, "/post", 302)
+}
+
+// render edit form
+func renderEdit(w http.ResponseWriter, r *http.Request) {
+	uuid := chi.URLParam(r, "uuid")
+	post, err := data.PostByUUID(uuid)
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Cannot get a post: %v!", err))
+		return
+	}
+	err = goview.Render(w, http.StatusOK, "posts/edit", goview.M{
+		"post":     post,
+		"Partials": []string{"posts/edit"},
+	})
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Render index error: %v!", err))
+		return
+	}
 }

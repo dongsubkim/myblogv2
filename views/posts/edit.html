@@ -1,0 +1,53 @@
+{{ define "head" }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+{{ end }}
+
+{{ define "content" }}
+<h1>Edit Post</h1>
+<form action={{ printf "/posts/%v?_method=PUT" .post.Uuid }} method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" name="title" class="form-control" id="title" value={{ printf "%v" .post.Title }} required>
+    </div>
+    <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <input type="text" name="category" class="form-control" id="category" value={{ printf "%v" .post.Category }} 
+            required>
+    </div>
+    <div class="mb-3">
+        <label for="image" class="form-label">Upload image(s)...<input id="my-file-selector" type="file"
+            style="display:none;" onchange="$('#upload-file-info').val($(this).val());"></label>
+        <input class="form-control" type="file" id="image" name="image" multiple data-show-upload="true"
+            data-show-caption="true" onchange="displayPreview(this)">
+    </div>
+    <div class="mb-3 d-flex d-none overflow-auto" id="image-preview"></div>
+    <div class="mb-3">
+    Delete images
+        <!-- <div class="d-flex overflow-auto">
+            <% post.images.forEach((img, i) => { %>
+                <div class="card g-0" style="width: 180px;" id="preview-card">
+                    <img src="<%= img.square %>" class="card-img-top" style="height: 180px;" alt="...">
+                    <div class="card-body">
+                        <label for="image-<%= i %>" class="overflow-auto"><%= img.originalname %></label>
+                        <div class="form-check-inline">
+                            <input type="checkbox" id="image-<%= i %>" name="deleteImages[]" value="<%= img.filename %>">
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div> -->
+    </div>
+    <div class="mb-3">
+        <label for="Content" class="form-label">Content</label>
+        <textarea class="form-control" name="content" id="Content" rows="10"></textarea>
+    </div>
+    <a class="btn btn-secondary" href="/post">Back</a>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>
+<script>
+    const simplemde = new SimpleMDE({ initialValue: {{ .post.Content }} });
+</script>
+<script src="/static/js/displayPreview.js"></script>
+{{ end }}

@@ -1,0 +1,46 @@
+{{define "head"}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+{{end}}
+
+{{define "content"}}
+<main class="container mt-5 mb-3">
+    <div class="row">
+        <h1 class="text-center">New Post</h1>
+        <form action="/post" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" id="title" aria-describedby="title" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <input type="text" name="category" class="form-control" id="category" aria-describedby="category"
+                    required>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Upload image(s)...<input id="my-file-selector" type="file"
+                        style="display:none;" onchange="$('#upload-file-info').val($(this).val());"></label>
+                <input class="form-control" type="file" id="image" name="image" multiple data-show-upload="true"
+                    data-show-caption="true" onchange="displayPreview(this)">
+            </div>
+            <div class="mb-3 d-flex d-none overflow-auto" id="image-preview"></div>
+            <div class="mb-3">
+                <label for="content" class="form-label">Content</label>
+                <textarea class="form-control" name="content" id="content" rows="10"></textarea>
+            </div>
+            <a href="/post" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-primary ">Submit</button>
+        </form>
+    </div>
+</main>
+    <script>
+        var simplemde = new SimpleMDE({
+            renderingConfig: {
+                singleLineBreaks: false,
+                codeSyntaxHighlighting: true,
+            },
+        }); // Returns HTML from a custom parser
+    </script>
+<script src="/static/js/displayPreview.js"></script>
+    
+{{end}}

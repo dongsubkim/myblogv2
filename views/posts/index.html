@@ -1,19 +1,20 @@
 {{define "head"}}
-    
 {{end}}
 
-
 {{define "content"}}
-    <h1>{{ .title }}</h1>
-    <p>Post list...</p>
+<div class="container">
     {{ range .posts }}
-    <div>
-        <p>Post id : {{ .Id }}</p>
-        <p>Post Uuid : {{ .Uuid }}</p>
-        <p>Post Category : {{ .Category }}</p>
-        <p>Post Content : {{ .Content }}</p>
-        <p>Post CreatedAt : {{ .CreatedAt }}</p>
+    <div class="card mb-3 border-0">
+        <div class="row">
+            <div class="card-body col-md-9 d-flex flex-column">
+                <h5 class="card-title">{{ .Title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{call $.categories .Category }}</h6>
+                <p class="card-text">{{ .Content }}</p>
+                <a href={{ printf "/post/%v" .Uuid }} class="card-link mt-auto">View post</a>
+            </div>
+        </div>
     </div>
     <hr>
     {{ end }}
+</div>
 {{end}}

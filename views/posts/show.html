@@ -1,4 +1,5 @@
 {{define "head"}}
+<link rel="stylesheet" href="/static/css/show.css">
 <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css"
     integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
 {{end}}
@@ -6,8 +7,8 @@
 {{define "content"}}
 <div class="row justify-content-center">
     <!-- Post Section -->
-    <div class="col-lg-8 mb-5">
-        <h1 class="mb-3"> uuid: {{ .post.Uuid }} </h1>
+    <div class="col-lg-10 mb-5">
+        <h1 class="mb-3"> {{ .post.Title }} </h1>
         <p class="text-muted">Category: {{ .post.Category }} </p>
         <p> {{ .post.Content }} </p>
         <p class="text-muted"> Last Modified: {{ .lastModified }}</p> 

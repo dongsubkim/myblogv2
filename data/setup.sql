@@ -1,9 +1,10 @@
-drop table posts;
-drop table comments;
+drop table posts cascade;
+drop table comments cascade;
 
 create table posts (
   id         serial primary key,
   uuid       varchar(64) not null unique,
+  title      varchar(255),
   category   varchar(255)[],
   content    text,
   created_at timestamp not null  

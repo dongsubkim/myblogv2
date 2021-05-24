@@ -1,8 +1,10 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/foolin/goview"
 	"github.com/go-chi/chi"
 )
 
@@ -29,7 +31,12 @@ func AdminOnly(next http.Handler) http.Handler {
 }
 
 func renderNew(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("admin new page to add new post!"))
+	err := goview.Render(w, http.StatusOK, "posts/new", goview.M{
+		"Partials": []string{"posts/new"},
+	})
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Render index error: %v!", err))
+	}
 }
 
 func adminIndex(w http.ResponseWriter, r *http.Request) {
