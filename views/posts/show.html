@@ -8,13 +8,13 @@
 <div class="row justify-content-center">
     <!-- Post Section -->
     <div class="col-lg-10 mb-5">
-        <h1 class="mb-3"> {{ .post.Title }} </h1>
-        <p class="text-muted">Category: {{ .post.Category }} </p>
-        <p> {{ .post.Content }} </p>
-        <p class="text-muted"> Last Modified: {{ .lastModified }}</p> 
+        <h1 class="mb-3"> {{ .Post.Title }} </h1>
+        <p class="text-muted">Category: {{ .Post.Category }} </p>
+        <p> {{ .Post.Content }} </p>
+        <p class="text-muted"> Last Modified: {{ .Post.CreatedAtDate }}</p> 
         <a class="btn btn-sm btn-secondary" href="/post">Back</a>
-        <a href={{ printf "/post/%v/edit" .post.Uuid }} class="btn btn-sm btn-secondary">Edit</a>
-        <form action={{ printf "/post/%v/?_method=DELETE" .post.Uuid }} method="POST" class="d-inline">
+        <a href={{ printf "/post/%v/edit" .Post.Uuid }} class="btn btn-sm btn-secondary">Edit</a>
+        <form action={{ printf "/post/%v/?_method=DELETE" .Post.Uuid }} method="POST" class="d-inline">
             <button class="btn btn-danger btn-sm">Delete</button>
         </form>
     </div>

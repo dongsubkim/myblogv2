@@ -1,6 +1,7 @@
 package data
 
 import (
+	"strings"
 	"time"
 
 	"github.com/lib/pq"
@@ -17,6 +18,10 @@ type Post struct {
 
 func (post *Post) CreatedAtDate() string {
 	return post.CreatedAt.Format("06/01/02 3:04pm")
+}
+
+func (post *Post) PopulateCategory() string {
+	return strings.Join(post.Category, ", ")
 }
 
 // Get all Posts in the database and returns it
@@ -82,5 +87,24 @@ func PostByUUID(uuid string) (post Post, err error) {
 	post = Post{}
 	err = db.QueryRow("SELECT id, uuid, title, category, content, created_at FROM posts WHERE uuid = $1", uuid).
 		Scan(&post.Id, &post.Uuid, &post.Title, pq.Array(&post.Category), &post.Content, &post.CreatedAt)
+	return
+}
+
+// Update category of navbar
+func UpdateCategory() (category map[string]int, err error) {
+	category = make(map[string]int)
+	rows, err := db.Query("SELECT category, count(*) FROM (SELECT unnest(category) AS category FROM posts) AS foo GROUP BY category ORDER BY category")
+	if err != nil {
+		return
+	}
+	for rows.Next() {
+		var cat string
+		var count int
+		if err = rows.Scan(&cat, &count); err != nil {
+			return
+		}
+		category[cat] = count
+	}
+	rows.Close()
 	return
 }

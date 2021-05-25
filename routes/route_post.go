@@ -10,6 +10,12 @@ import (
 	"github.com/go-chi/chi"
 )
 
+var CategoryNavbar map[string]int
+
+func init() {
+	CategoryNavbar, _ = data.UpdateCategory()
+}
+
 func PostRouter(r chi.Router) {
 	// get list of posts
 	r.Get("/", getIndex)
@@ -45,11 +51,9 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = goview.Render(w, http.StatusOK, "posts/index", goview.M{
-		"posts":    posts,
-		"Partials": []string{"posts/index"},
-		"categories": func(categories []string) string {
-			return strings.Join(categories, ", ")
-		},
+		"Posts":          &posts,
+		"CategoryNavbar": &CategoryNavbar,
+		"Partials":       []string{"posts/index"},
 	})
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Render index error: %v!", err))
@@ -66,9 +70,9 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = goview.Render(w, http.StatusOK, "posts/show", goview.M{
-		"post":         post,
-		"lastModified": post.CreatedAtDate(),
-		"Partials":     []string{"posts/show"},
+		"Post":           &post,
+		"CategoryNavbar": &CategoryNavbar,
+		"Partials":       []string{"posts/show"},
 	})
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Render show page error: %v!", err))
@@ -88,6 +92,11 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 		error_message(w, r, fmt.Sprintf("Fail to create a post: %v!", err))
 		return
 	}
+	CategoryNavbar, err = data.UpdateCategory()
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Fail to update category: %v!", err))
+		return
+	}
 	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), 302)
 }
 
@@ -103,6 +112,11 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 		error_message(w, r, fmt.Sprintf("Fail to update the post: %v!", err))
 		return
 	}
+	CategoryNavbar, err = data.UpdateCategory()
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Fail to update category: %v!", err))
+		return
+	}
 	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), 302)
 }
 
@@ -112,6 +126,11 @@ func deletePost(w http.ResponseWriter, r *http.Request) {
 	err := data.DeletePost(uuid)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to delete the post: %v!", err))
+		return
+	}
+	CategoryNavbar, err = data.UpdateCategory()
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Fail to update category: %v!", err))
 		return
 	}
 	http.Redirect(w, r, "/post", 302)
@@ -126,7 +145,7 @@ func renderEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = goview.Render(w, http.StatusOK, "posts/edit", goview.M{
-		"post":     post,
+		"post":     &post,
 		"Partials": []string{"posts/edit"},
 	})
 	if err != nil {
