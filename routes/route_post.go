@@ -3,7 +3,6 @@ package routes
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/dongsubkim/myblogv2/data"
 	"github.com/foolin/goview"
@@ -11,6 +10,12 @@ import (
 )
 
 var CategoryNavbar map[string]int
+
+type PostRequest struct {
+	Title    string
+	Category string
+	Content  string
+}
 
 func init() {
 	CategoryNavbar, _ = data.UpdateCategory()
@@ -33,7 +38,7 @@ func PostRouter(r chi.Router) {
 
 		r.Get("/edit", renderEdit)
 		// Comment router
-		r.Route("/commnets", CommentRouter)
+		r.Route("/comments", CommentRouter)
 	})
 }
 
@@ -69,8 +74,15 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 		error_message(w, r, fmt.Sprintf("Cannot get a post: %v!", err))
 		return
 	}
+	comments, err := post.Comments()
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Cannot get post's comments: %v!", err))
+		return
+	}
 	err = goview.Render(w, http.StatusOK, "posts/show", goview.M{
 		"Post":           &post,
+		"PostUuid":       func() string { return post.Uuid },
+		"Comments":       comments,
 		"CategoryNavbar": &CategoryNavbar,
 		"Partials":       []string{"posts/show"},
 	})
@@ -83,11 +95,10 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 // create a post
 func createPost(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10485760)
-	uuid := createUUID()
 	title := r.FormValue("title")
-	category := strings.Split(r.FormValue("category"), ", ")
+	category := r.FormValue("category")
 	content := r.FormValue("content")
-	err := data.CreatePost(uuid, title, content, category)
+	uuid, err := data.CreatePost(title, category, content)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to create a post: %v!", err))
 		return
@@ -95,19 +106,18 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 	CategoryNavbar, err = data.UpdateCategory()
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to update category: %v!", err))
-		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), 302)
 }
 
 // update a post
 func updatePost(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	uuid := r.FormValue("uuid")
-	title := r.FormValue("title")
-	category := []string{r.FormValue("category")}
-	content := r.FormValue("content")
-	err := data.UpdatePost(uuid, title, content, category)
+	r.ParseMultipartForm(10485760)
+	uuid := chi.URLParam(r, "uuid")
+	title := r.PostFormValue("title")
+	category := r.PostFormValue("category")
+	content := r.PostFormValue("content")
+	err := data.UpdatePost(uuid, title, category, content)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to update the post: %v!", err))
 		return

@@ -12,9 +12,10 @@ create table posts (
 
 create table comments (
   id         serial primary key,
+  uuid       varchar(64) not null unique,
   username   varchar(255),
   password   text,
   body       text,
-  post_id    integer references posts(id),
+  post_uuid  varchar(64) references posts(uuid),
   created_at timestamp not null       
 );

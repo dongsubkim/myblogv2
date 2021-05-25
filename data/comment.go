@@ -1,22 +1,19 @@
 package data
 
 import (
-	"log"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Comment struct {
 	Id        int
-	Name      string
+	Uuid      string
+	Username  string
 	Password  string
 	Body      string
-	CommentId int
+	PostUuid  string
 	CreatedAt time.Time
-}
-
-type Credentials struct {
-	Password string
-	Username string
 }
 
 func (comment *Comment) CreatedAtDate() string {
@@ -25,14 +22,13 @@ func (comment *Comment) CreatedAtDate() string {
 
 // get comments to a post
 func (post *Post) Comments() (comments []Comment, err error) {
-	rows, err := db.Query("SELECT id, username, body, created_at FROM comments where post_id = $1", post.Id)
+	rows, err := db.Query("SELECT id, uuid, username, body, post_uuid, created_at FROM comments where post_uuid = $1 ORDER BY created_at", post.Uuid)
 	if err != nil {
-		log.Panicln("Fail to get comments", err)
 		return
 	}
 	for rows.Next() {
 		comment := Comment{}
-		if err = rows.Scan(&comment.Id, &comment.Name, &comment.Body, &comment.CreatedAt); err != nil {
+		if err = rows.Scan(&comment.Id, &comment.Uuid, &comment.Username, &comment.Body, &comment.PostUuid, &comment.CreatedAt); err != nil {
 			return
 		}
 		comments = append(comments, comment)
@@ -41,14 +37,44 @@ func (post *Post) Comments() (comments []Comment, err error) {
 	return
 }
 
-// Create a new post
-func CreateComment(cred Credentials, post Post, body string) (comment Comment, err error) {
-	statement := "insert into posts (username, password, body, comment_id, created_at) values ($1, $2, $3, $4, $5) returning id, username, password, body, comment_id, created_at"
+// Create a new comment
+func CreateComment(username, password, body, postUuid string) (err error) {
+	statement := "insert into comments (uuid, username, password, body, post_uuid, created_at) values ($1, $2, $3, $4, $5, $6)"
 	stmt, err := db.Prepare(statement)
 	if err != nil {
 		return
 	}
 	defer stmt.Close()
-	err = stmt.QueryRow(cred.Username, cred.Password, body, post.Id, time.Now()).Scan(&comment.Id, &comment.Name, &comment.Password, &comment.Body, &comment.CommentId, &comment.CreatedAt)
+	uuid := createUUID()
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return
+	}
+	_, err = stmt.Query(uuid, username, string(hashedPassword), body, postUuid, time.Now())
+	return
+}
+
+// Get a comment by commentId
+func CommentByUuid(uuid string) (comment Comment, err error) {
+	err = db.QueryRow("SELECT id, uuid, username, password, body, post_uuid, created_at from comments where uuid = $1", uuid).
+		Scan(&comment.Id, &comment.Uuid, &comment.Username, &comment.Password, &comment.Body, &comment.PostUuid, &comment.CreatedAt)
+	return
+}
+
+// Update comment
+func UpdateComment(uuid, body string) (err error) {
+	_, err = db.Exec("update comments set body = $2 where uuid = $1", uuid, body)
+	return
+}
+
+// Delete comment
+func DeleteComment(uuid string) (err error) {
+	_, err = db.Exec("delete from comments where uuid = $1", uuid)
+	return
+}
+
+// Get a password of comment
+func PasswordByComment(uuid string) (password string, err error) {
+	err = db.QueryRow("select password from comments where uuid = $1", uuid).Scan(&password)
 	return
 }

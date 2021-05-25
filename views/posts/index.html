@@ -9,7 +9,7 @@
             <div class="card-body col-md-9 d-flex flex-column">
                 <h5 class="card-title">{{ .Title }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ .PopulateCategory }}</h6>
-                <p class="card-text">{{ .Content }}</p>
+                <p class="card-text">{{ .SanitizedContent }}</p>
                 <a href={{ printf "/post/%v" .Uuid }} class="card-link mt-auto">View post</a>
             </div>
         </div>

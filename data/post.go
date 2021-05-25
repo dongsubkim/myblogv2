@@ -1,10 +1,19 @@
 package data
 
 import (
+	"bytes"
+	"html/template"
 	"strings"
 	"time"
 
 	"github.com/lib/pq"
+	"github.com/microcosm-cc/bluemonday"
+	stripmd "github.com/writeas/go-strip-markdown"
+	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 type Post struct {
@@ -22,6 +31,39 @@ func (post *Post) CreatedAtDate() string {
 
 func (post *Post) PopulateCategory() string {
 	return strings.Join(post.Category, ", ")
+}
+
+func (post *Post) ParseContent() template.HTML {
+	md := goldmark.New(
+		goldmark.WithExtensions(
+			extension.GFM,
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("vs"),
+			),
+		),
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
+		goldmark.WithRendererOptions(
+			html.WithHardWraps(),
+			html.WithXHTML(),
+			html.WithUnsafe(),
+		),
+	)
+	var buf bytes.Buffer
+	if err := md.Convert([]byte(post.Content), &buf); err != nil {
+		panic(err)
+	}
+	return template.HTML(buf.Bytes())
+	// return template.HTML()
+}
+
+func (post *Post) SanitizedContent() string {
+	stripped := stripmd.Strip(bluemonday.StrictPolicy().Sanitize(post.Content))
+	if len(stripped) < 200 {
+		return stripped
+	}
+	return stripped[:200]
 }
 
 // Get all Posts in the database and returns it
@@ -42,19 +84,22 @@ func Posts() (posts []Post, err error) {
 }
 
 // Create a new post
-func CreatePost(uuid, title, content string, category []string) (err error) {
+func CreatePost(title, categoryRaw, content string) (uuid string, err error) {
 	statement := "insert into posts (uuid, title, category, content, created_at) values ($1, $2, $3, $4, $5)"
 	stmt, err := db.Prepare(statement)
 	if err != nil {
 		return
 	}
 	defer stmt.Close()
+	category := strings.Split(categoryRaw, ", ")
+	uuid = createUUID()
 	_, err = stmt.Query(uuid, title, pq.Array(category), content, time.Now())
 	return
 }
 
 // Update a post
-func UpdatePost(uuid, title, content string, category []string) (err error) {
+func UpdatePost(uuid, title, categoryRaw, content string) (err error) {
+	category := strings.Split(categoryRaw, ", ")
 	_, err = db.Exec("update posts set title = $2, category = $3, content = $4, created_at = $5 where uuid = $1", uuid, title, pq.Array(category), content, time.Now())
 	return
 }

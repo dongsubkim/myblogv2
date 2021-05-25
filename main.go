@@ -17,7 +17,8 @@ import (
 func setHttpMethod(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
-			if m, ok := r.URL.Query()["_method"]; ok && len(m) == 1 {
+			r.ParseForm()
+			if m, ok := r.Form["_method"]; ok && len(m) == 1 {
 				r.Method = m[0]
 			}
 		}
@@ -29,10 +30,10 @@ func setHttpMethod(next http.Handler) http.Handler {
 func main() {
 	r := chi.NewRouter()
 
+	r.Use(setHttpMethod)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
-	r.Use(setHttpMethod)
 	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, path.Join("views", "favicon.ico"))
 	})

@@ -18,9 +18,6 @@ img {
 
 pre {
     padding: 16px;
-    /* overflow: auto;
-    font-size: 100%;
-    line-height: 1.45; */
-    background-color: #f6f8fa;
+    background-color: #f6f8fa !important;
     border-radius: 6px;
 } 
