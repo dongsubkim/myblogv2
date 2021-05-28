@@ -1,6 +1,6 @@
 module github.com/dongsubkim/myblogv2
 
-// +heroku goVersion go1.11
+// +heroku goVersion go1.16
 go 1.16
 
 require (
