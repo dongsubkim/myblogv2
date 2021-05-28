@@ -126,6 +126,10 @@ func DeletePost(uuid string) (err error) {
 	if err != nil {
 		return
 	}
+	err = DeleteCommentsByPost(uuid)
+	if err != nil {
+		return
+	}
 	_, err = db.Exec("delete from posts where uuid = $1", uuid)
 	return
 }

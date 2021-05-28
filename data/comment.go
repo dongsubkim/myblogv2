@@ -78,3 +78,9 @@ func PasswordByComment(uuid string) (password string, err error) {
 	err = db.QueryRow("select password from comments where uuid = $1", uuid).Scan(&password)
 	return
 }
+
+// DeleteCommentsByPost removes comments of a post
+func DeleteCommentsByPost(postUuid string) (err error) {
+	_, err = db.Exec("delete from comments where post_uuid = $1", postUuid)
+	return
+}

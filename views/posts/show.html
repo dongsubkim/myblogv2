@@ -9,7 +9,7 @@
     <!-- Post Section -->
     <div class="col-lg-10 mb-5">
         <h1 class="mb-3"> {{ .Post.Title }} </h1>
-        <p class="text-muted">Category: {{ .Post.Category }} </p>
+        <p class="text-muted">Category: {{ .Post.PopulateCategory }} </p>
         <p>{{ .Post.ParseContent }}</p>
         <p class="text-muted"> Last Modified: {{ .Post.CreatedAtDate }}</p> 
         <a class="btn btn-sm btn-secondary" href="/post">Back</a>
