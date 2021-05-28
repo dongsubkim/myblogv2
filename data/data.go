@@ -20,7 +20,7 @@ func init() {
 	}
 	db, err = sql.Open("postgres", DB_URL)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("ERROR connecting postgres db:", err)
 	}
 }
 
