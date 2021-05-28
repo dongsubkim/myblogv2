@@ -167,3 +167,9 @@ func AdminByUUID(uuid string) (admin Admin, err error) {
 		Scan(&admin.Id, &admin.Uuid, &admin.Name, &admin.Email, &admin.Password, &admin.CreatedAt)
 	return
 }
+
+// Get admin count
+func AdminCount() (count int, err error) {
+	err = db.QueryRow("SELECT COUNT(*) FROM admins").Scan(&count)
+	return
+}

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -15,11 +16,15 @@ func init() {
 	var err error
 	// Connect to the postgres db
 	//you might have to change the connection string to add your database credentials
-	db, err = sql.Open("postgres", "dbname=myblog sslmode=disable")
+	// db, err = sql.Open("postgres", "dbname=myblog sslmode=disable")
+	DB_URL := "dbname=myblog sslmode=disable"
+	if v, ok := os.LookupEnv("DATABASE_URL"); ok {
+		DB_URL = v
+	}
+	db, err = sql.Open("postgres", DB_URL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return
 }
 
 // create a random UUID with from RFC 4122

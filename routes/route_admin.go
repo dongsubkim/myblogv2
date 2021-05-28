@@ -16,6 +16,7 @@ func AdminRouter() http.Handler {
 	r.Get("/", loginForm)
 	r.Post("/", authenticate)
 	r.Route("/register", func(r chi.Router) {
+		r.Use(CheckAdminCount)
 		r.Get("/", registerForm)
 		r.Post("/", createAdmin)
 	})
@@ -37,6 +38,15 @@ func AdminOnly(next http.Handler) http.Handler {
 		}
 		log.Println("Admin info not found or expired")
 		http.Redirect(w, r, "/admin", http.StatusFound)
+	})
+}
+
+func CheckAdminCount(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if c, err := data.AdminCount(); err == nil && c == 0 {
+			next.ServeHTTP(w, r)
+		}
+		http.Redirect(w, r, "/post", http.StatusFound)
 	})
 }
 

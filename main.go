@@ -61,8 +61,9 @@ func main() {
 
 	r.Mount("/admin", routes.AdminRouter())
 
-	fmt.Println("Serving on Port 3000")
-	http.ListenAndServe(":3000", r)
+	port := os.Getenv("PORT")
+	log.Printf("Serving on Port %v", port)
+	http.ListenAndServe(fmt.Sprintf(":%v", port), r)
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve
