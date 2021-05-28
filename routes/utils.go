@@ -22,11 +22,11 @@ var cld *cloudinary.Cloudinary
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Error loading .env file")
 	}
 	cld, err = cloudinary.NewFromParams(os.Getenv("CLOUDINARY_CLOUD_NAME"), os.Getenv("CLOUDINARY_KEY"), os.Getenv("CLOUDINARY_SECRET"))
 	if err != nil {
-		log.Fatal("Error loading cloudinary api")
+		log.Println("Error loading cloudinary api")
 	}
 }
 
