@@ -14,9 +14,6 @@ var db *sql.DB
 
 func init() {
 	var err error
-	// Connect to the postgres db
-	//you might have to change the connection string to add your database credentials
-	// db, err = sql.Open("postgres", "dbname=myblog sslmode=disable")
 	DB_URL := "dbname=myblog sslmode=disable"
 	if v, ok := os.LookupEnv("DATABASE_URL"); ok {
 		DB_URL = v
