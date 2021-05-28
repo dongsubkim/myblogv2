@@ -11,12 +11,6 @@ import (
 
 var CategoryNavbar map[string]int
 
-type PostRequest struct {
-	Title    string
-	Category string
-	Content  string
-}
-
 func init() {
 	CategoryNavbar, _ = data.UpdateCategory()
 }
@@ -36,7 +30,7 @@ func PostRouter(r chi.Router) {
 		// delete a post
 		r.With(AdminOnly).Delete("/", deletePost)
 
-		r.Get("/edit", renderEdit)
+		r.With(AdminOnly).Get("/edit", renderEdit)
 		// Comment router
 		r.Route("/comments", CommentRouter)
 	})
@@ -58,6 +52,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 	err = goview.Render(w, http.StatusOK, "posts/index", goview.M{
 		"Posts":          &posts,
 		"CategoryNavbar": &CategoryNavbar,
+		"Authorized":     authorized(r),
 		"Partials":       []string{"posts/index"},
 	})
 	if err != nil {
@@ -81,9 +76,9 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 	}
 	err = goview.Render(w, http.StatusOK, "posts/show", goview.M{
 		"Post":           &post,
-		"PostUuid":       func() string { return post.Uuid },
 		"Comments":       comments,
 		"CategoryNavbar": &CategoryNavbar,
+		"Authorized":     authorized(r),
 		"Partials":       []string{"posts/show"},
 	})
 	if err != nil {
@@ -94,46 +89,84 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 
 // create a post
 func createPost(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(10485760)
-	title := r.FormValue("title")
-	category := r.FormValue("category")
-	content := r.FormValue("content")
-	uuid, err := data.CreatePost(title, category, content)
+	images, err := uploadImages(r)
+	if err != nil {
+		error_message(w, r, "Fail to upload images to cloudinary server")
+	}
+
+	title := r.PostFormValue("title")
+	category := r.PostFormValue("category")
+	content := replaceImageLink(r.PostFormValue("content"), images)
+
+	uuid, err := data.CreatePost(title, category, content, images)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to create a post: %v!", err))
 		return
 	}
+
 	CategoryNavbar, err = data.UpdateCategory()
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to update category: %v!", err))
 	}
-	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), 302)
+
+	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), http.StatusFound)
 }
 
 // update a post
 func updatePost(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(10485760)
+	images, err := uploadImages(r)
+	if err != nil {
+		error_message(w, r, "Fail to upload images to cloudinary server")
+	}
+
 	uuid := chi.URLParam(r, "uuid")
 	title := r.PostFormValue("title")
 	category := r.PostFormValue("category")
-	content := r.PostFormValue("content")
-	err := data.UpdatePost(uuid, title, category, content)
+	content := replaceImageLink(r.PostFormValue("content"), images)
+
+	err = data.UpdatePost(uuid, title, category, content, images)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to update the post: %v!", err))
 		return
 	}
+
+	deletedImages := r.PostForm["deleteImages"]
+	for _, image_uuid := range deletedImages {
+		err = data.DeleteImageByUuid(image_uuid)
+		if err != nil {
+			error_message(w, r, fmt.Sprintf("Fail to remove image of post: %v!", err))
+		}
+		err = deleteImage(image_uuid)
+		if err != nil {
+			error_message(w, r, fmt.Sprintf("Error on destory call to cloudinary server: %v!", err))
+		}
+	}
+
 	CategoryNavbar, err = data.UpdateCategory()
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to update category: %v!", err))
 		return
 	}
-	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), 302)
+
+	http.Redirect(w, r, fmt.Sprintf("/post/%v", uuid), http.StatusFound)
 }
 
 // delete a post
 func deletePost(w http.ResponseWriter, r *http.Request) {
 	uuid := chi.URLParam(r, "uuid")
-	err := data.DeletePost(uuid)
+	images, err := data.ImagesByPost(uuid)
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Fail to get images of post: %v!", err))
+		return
+	}
+	for _, image := range images {
+		err = deleteImage(image.Uuid)
+		if err != nil {
+			error_message(w, r, fmt.Sprintf("Error on destory call to cloudinary server: %v!", err))
+			return
+		}
+	}
+	err = data.DeletePost(uuid)
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to delete the post: %v!", err))
 		return
@@ -143,7 +176,7 @@ func deletePost(w http.ResponseWriter, r *http.Request) {
 		error_message(w, r, fmt.Sprintf("Fail to update category: %v!", err))
 		return
 	}
-	http.Redirect(w, r, "/post", 302)
+	http.Redirect(w, r, "/post", http.StatusFound)
 }
 
 // render edit form
@@ -154,9 +187,18 @@ func renderEdit(w http.ResponseWriter, r *http.Request) {
 		error_message(w, r, fmt.Sprintf("Cannot get a post: %v!", err))
 		return
 	}
+
+	images, err := data.ImagesByPost(uuid)
+	if err != nil {
+		error_message(w, r, fmt.Sprintf("Cannot get images of post: %v", err))
+	}
+
 	err = goview.Render(w, http.StatusOK, "posts/edit", goview.M{
-		"post":     &post,
-		"Partials": []string{"posts/edit"},
+		"Post":           &post,
+		"Images":         &images,
+		"CategoryNavbar": &CategoryNavbar,
+		"Authorized":     authorized(r),
+		"Partials":       []string{"posts/edit"},
 	})
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Render index error: %v!", err))

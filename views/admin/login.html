@@ -1,0 +1,32 @@
+{{ define "head" }}
+{{ end }}
+
+{{ define "content" }}
+<div class="container d-flex justify-content-center align-items-center my-auto">
+    <div class="row">
+        <div class="card shadow" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Admin Login</h5>
+                <form action="/admin" class="validated-form" method='POST'>
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Email</label>
+                        <input class="form-control" type="text" id="email" name="email" autofocus required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="password">Password</label>
+                        <input class="form-control" type="password" id="password" name="password" required>
+                        <div class="valid-feedback">
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success btn-fill">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

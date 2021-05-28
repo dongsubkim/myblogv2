@@ -31,7 +31,7 @@ func commentAuthorOnly(next http.Handler) http.Handler {
 			return
 		}
 		if err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)); err != nil {
-			error_message(w, r, fmt.Sprint("Password not matched!"))
+			error_message(w, r, "Password not matched!")
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -45,7 +45,7 @@ func createComment(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Error during creating a comment: %v!", err))
 	}
-	http.Redirect(w, r, fmt.Sprintf("/post/%v", postUuid), 302)
+	http.Redirect(w, r, fmt.Sprintf("/post/%v", postUuid), http.StatusFound)
 }
 
 func updateComment(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +53,7 @@ func updateComment(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to update a comment: %v!", err))
 	}
-	http.Redirect(w, r, fmt.Sprintf("/post/%v", chi.URLParam(r, "uuid")), 302)
+	http.Redirect(w, r, fmt.Sprintf("/post/%v", chi.URLParam(r, "uuid")), http.StatusFound)
 }
 
 func deleteComment(w http.ResponseWriter, r *http.Request) {
@@ -61,5 +61,5 @@ func deleteComment(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Fail to delete a comment: %v!", err))
 	}
-	http.Redirect(w, r, fmt.Sprintf("/post/%v", chi.URLParam(r, "uuid")), 302)
+	http.Redirect(w, r, fmt.Sprintf("/post/%v", chi.URLParam(r, "uuid")), http.StatusFound)
 }

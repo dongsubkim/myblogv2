@@ -5,14 +5,14 @@
 
 {{ define "content" }}
 <h1>Edit Post</h1>
-<form action={{ printf "/post/%v?_method=PUT" .post.Uuid }} method="POST" enctype="multipart/form-data">
+<form action={{ printf "/post/%v?_method=PUT" .Post.Uuid }} method="POST" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="title" class="form-label">Title</label>
-        <input type="text" name="title" class="form-control" id="title" value={{ printf "%v" .post.Title }} required>
+        <input type="text" name="title" class="form-control" id="title" value={{ .Post.Title }} required>
     </div>
     <div class="mb-3">
         <label for="category" class="form-label">Category</label>
-        <input type="text" name="category" class="form-control" id="category" value={{ printf "%v" .post.Category }} 
+        <input type="text" name="category" class="form-control" id="category" value={{ .Post.PopulateCategory }} 
             required>
     </div>
     <div class="mb-3">
@@ -24,19 +24,19 @@
     <div class="mb-3 d-flex d-none overflow-auto" id="image-preview"></div>
     <div class="mb-3">
     Delete images
-        <!-- <div class="d-flex overflow-auto">
-            <% post.images.forEach((img, i) => { %>
+        <div class="d-flex overflow-auto">
+            {{ range $i, $image := .Images }}
                 <div class="card g-0" style="width: 180px;" id="preview-card">
-                    <img src="<%= img.square %>" class="card-img-top" style="height: 180px;" alt="...">
+                    <img src={{ $image.SquareURL | printf }} class="card-img-top" style="height: 180px;" alt="...">
                     <div class="card-body">
-                        <label for="image-<%= i %>" class="overflow-auto"><%= img.originalname %></label>
+                        <label for={{ $i | printf "iamge-%v" }} class="overflow-auto">{{ $image.Filename }}</label>
                         <div class="form-check-inline">
-                            <input type="checkbox" id="image-<%= i %>" name="deleteImages[]" value="<%= img.filename %>">
+                            <input type="checkbox" id={{ $i | printf "iamge-%v" }} name="deleteImages" value={{ $image.Uuid }}>
                         </div>
                     </div>
                 </div>
-            <% }) %>
-        </div> -->
+            {{end}}
+            </div>
     </div>
     <div class="mb-3">
         <label for="Content" class="form-label">Content</label>
@@ -47,7 +47,7 @@
 
 </form>
 <script>
-    const simplemde = new SimpleMDE({ initialValue: {{ .post.Content }} });
+    const simplemde = new SimpleMDE({ initialValue: {{ .Post.Content }} });
 </script>
 <script src="/static/js/displayPreview.js"></script>
 {{ end }}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -12,7 +13,15 @@ import (
 	"github.com/dongsubkim/myblogv2/routes"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
 
 func setHttpMethod(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +53,7 @@ func main() {
 
 	r.Route("/", func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "/post", 302)
+			http.Redirect(w, r, "/post", http.StatusFound)
 		})
 	})
 

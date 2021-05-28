@@ -33,6 +33,14 @@ func (post *Post) PopulateCategory() string {
 	return strings.Join(post.Category, ", ")
 }
 
+func (post *Post) ThumbnailImage() string {
+	image, err := ImageByPost(post.Uuid)
+	if err == nil {
+		return image.SquareURL()
+	}
+	return ""
+}
+
 func (post *Post) ParseContent() template.HTML {
 	md := goldmark.New(
 		goldmark.WithExtensions(
@@ -55,7 +63,6 @@ func (post *Post) ParseContent() template.HTML {
 		panic(err)
 	}
 	return template.HTML(buf.Bytes())
-	// return template.HTML()
 }
 
 func (post *Post) SanitizedContent() string {
@@ -63,7 +70,7 @@ func (post *Post) SanitizedContent() string {
 	if len(stripped) < 200 {
 		return stripped
 	}
-	return stripped[:200]
+	return stripped[:200] + "..."
 }
 
 // Get all Posts in the database and returns it
@@ -84,28 +91,41 @@ func Posts() (posts []Post, err error) {
 }
 
 // Create a new post
-func CreatePost(title, categoryRaw, content string) (uuid string, err error) {
+func CreatePost(title, categoryRaw, content string, images []*Image) (uuid string, err error) {
 	statement := "insert into posts (uuid, title, category, content, created_at) values ($1, $2, $3, $4, $5)"
 	stmt, err := db.Prepare(statement)
 	if err != nil {
 		return
 	}
 	defer stmt.Close()
-	category := strings.Split(categoryRaw, ", ")
 	uuid = createUUID()
+	category := strings.Split(categoryRaw, ", ")
 	_, err = stmt.Query(uuid, title, pq.Array(category), content, time.Now())
+	if err != nil {
+		return
+	}
+
+	err = insertImages(images, uuid)
 	return
 }
 
 // Update a post
-func UpdatePost(uuid, title, categoryRaw, content string) (err error) {
+func UpdatePost(uuid, title, categoryRaw, content string, images []*Image) (err error) {
 	category := strings.Split(categoryRaw, ", ")
-	_, err = db.Exec("update posts set title = $2, category = $3, content = $4, created_at = $5 where uuid = $1", uuid, title, pq.Array(category), content, time.Now())
+	_, err = db.Exec("UPDATE posts SET title = $2, category = $3, content = $4, created_at = $5 where uuid = $1", uuid, title, pq.Array(category), content, time.Now())
+	if err != nil {
+		return
+	}
+	err = insertImages(images, uuid)
 	return
 }
 
 // Delete a post
 func DeletePost(uuid string) (err error) {
+	err = DeleteImagesByPost(uuid)
+	if err != nil {
+		return
+	}
 	_, err = db.Exec("delete from posts where uuid = $1", uuid)
 	return
 }
