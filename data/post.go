@@ -136,13 +136,13 @@ func DeletePost(uuid string) (err error) {
 
 // Get Posts by Category
 func PostsByCategory(category string) (posts []Post, err error) {
-	rows, err := db.Query("SELECT id, title, category, content, created_at FROM posts WHERE $1=any(category) ORDER BY created_at DESC", category)
+	rows, err := db.Query("SELECT id, uuid, title, category, content, created_at FROM posts WHERE $1=any(category) ORDER BY created_at DESC", category)
 	if err != nil {
 		return
 	}
 	for rows.Next() {
 		post := Post{}
-		if err = rows.Scan(&post.Id, &post.Title, pq.Array(&post.Category), &post.Content, &post.CreatedAt); err != nil {
+		if err = rows.Scan(&post.Id, &post.Uuid, &post.Title, pq.Array(&post.Category), &post.Content, &post.CreatedAt); err != nil {
 			return
 		}
 		posts = append(posts, post)
