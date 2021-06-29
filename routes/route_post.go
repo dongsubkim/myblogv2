@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/dongsubkim/myblogv2/data"
 	"github.com/foolin/goview"
@@ -40,10 +41,21 @@ func PostRouter(r chi.Router) {
 func getIndex(w http.ResponseWriter, r *http.Request) {
 	var posts []data.Post
 	var err error
-	if category, ok := r.URL.Query()["category"]; ok {
-		posts, err = data.PostsByCategory(category[0])
+	var page int
+	var category string
+	if p, ok := r.URL.Query()["page"]; ok {
+		page, err = strconv.Atoi(p[0])
+		if err != nil {
+			page = 0
+		}
 	} else {
-		posts, err = data.Posts()
+		page = 0
+	}
+	if categories, ok := r.URL.Query()["category"]; ok {
+		category = categories[0]
+		posts, err = data.PostsByCategory(category, page)
+	} else {
+		posts, err = data.Posts(page)
 	}
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Cannot get posts: %v!", err))
@@ -53,7 +65,14 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		"Posts":          &posts,
 		"CategoryNavbar": &CategoryNavbar,
 		"Authorized":     authorized(r),
+		"IsFirst":        page == 0,
+		"IsLast":         len(posts) < data.PostPerPage,
+		"Page":           page,
+		"Category":       category,
 		"Partials":       []string{"posts/index"},
+		"add": func(a int, b int) int {
+			return a + b
+		},
 	})
 	if err != nil {
 		error_message(w, r, fmt.Sprintf("Render index error: %v!", err))

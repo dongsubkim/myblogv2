@@ -12,38 +12,41 @@
     </div>
     <div class="mb-3">
         <label for="category" class="form-label">Category</label>
-        <input type="text" name="category" class="form-control" id="category" value={{ .Post.PopulateCategory }} 
+        <input type="text" name="category" class="form-control" id="category" value={{ .Post.PopulateCategory }}
             required>
     </div>
     <div class="mb-3">
         <label for="image" class="form-label">Upload image(s)...<input id="my-file-selector" type="file"
-            style="display:none;" onchange="$('#upload-file-info').val($(this).val());"></label>
+                style="display:none;" onchange="$('#upload-file-info').val($(this).val());"></label>
         <input class="form-control" type="file" id="image" name="image" multiple data-show-upload="true"
             data-show-caption="true" onchange="displayPreview(this)">
     </div>
     <div class="mb-3 d-flex d-none overflow-auto" id="image-preview"></div>
     <div class="mb-3">
-    Delete images
+        Delete images
         <div class="d-flex overflow-auto">
             {{ range $i, $image := .Images }}
-                <div class="card g-0" style="width: 180px;" id="preview-card">
-                    <img src={{ $image.SquareURL | printf }} class="card-img-top" style="height: 180px;" alt="...">
-                    <div class="card-body">
-                        <label for={{ $i | printf "iamge-%v" }} class="overflow-auto">{{ $image.Filename }}</label>
-                        <div class="form-check-inline">
-                            <input type="checkbox" id={{ $i | printf "iamge-%v" }} name="deleteImages" value={{ $image.Uuid }}>
-                        </div>
+            <div class="card g-0" style="width: 180px;" id="preview-card">
+                <img src={{ $image.SquareURL | printf }} class="card-img-top" style="height: 180px;" alt="...">
+                <div class="card-body">
+                    <label for={{ $i | printf "iamge-%v" }} class="overflow-auto">{{ $image.Filename }}</label>
+                    <div class="form-check-inline">
+                        <input type="checkbox" id={{ $i | printf "iamge-%v" }} name="deleteImages"
+                            value={{ $image.Uuid }}>
                     </div>
                 </div>
-            {{end}}
             </div>
+            {{end}}
+        </div>
     </div>
     <div class="mb-3">
         <label for="Content" class="form-label">Content</label>
         <textarea class="form-control" name="content" id="Content" rows="10"></textarea>
     </div>
-    <a class="btn btn-secondary" href="/post">Back</a>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="mb-3 d-flex justify-content-between">
+        <a class="btn btn-secondary" href="/post">Back</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
 
 </form>
 <script>

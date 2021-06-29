@@ -11,12 +11,18 @@
         <h1 class="mb-3"> {{ .Post.Title }} </h1>
         <p class="text-muted">Category: {{ .Post.PopulateCategory }} </p>
         <p>{{ .Post.ParseContent }}</p>
-        <p class="text-muted"> Last Modified: {{ .Post.CreatedAtDate }}</p> 
-        <a class="btn btn-sm btn-secondary" href="/post">Back</a>
-        <a href={{ printf "/post/%v/edit" .Post.Uuid }} class="btn btn-sm btn-secondary">Edit</a>
-        <form action={{ printf "/post/%v/?_method=DELETE" .Post.Uuid }} method="POST" class="d-inline">
-            <button class="btn btn-danger btn-sm">Delete</button>
-        </form>
+        <p class="text-muted"> Last Modified: {{ .Post.CreatedAtDate }}</p>
+        <div class="d-flex justify-content-between">
+            <div>
+                <div class="btn btn-sm btn-secondary" onclick="history.back()">Back</div>
+                <!-- <a class="btn btn-sm btn-secondary" href="/post">Back</a> -->
+                <a href={{ printf "/post/%v/edit" .Post.Uuid }} class="btn btn-sm btn-secondary">Edit</a>
+            </div>
+            <form action={{ printf "/post/%v/?_method=DELETE" .Post.Uuid }} method="POST" class="d-inline">
+                <button class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </div>
+
     </div>
     <!-- Comment Section -->
     <div class="col-lg-10 mb-3">
@@ -43,7 +49,8 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li>
-                                <a href="#!" class="dropdown-item" onclick="toggler({{ printf "editForm%v" .Uuid }})">Edit</a>
+                                <a href="#!" class="dropdown-item"
+                                    onclick="toggler({{ printf "editForm%v" .Uuid }})">Edit</a>
                             </li>
                             <li>
                                 <button type="button" class="dropdown-item" data-bs-toggle="modal"
@@ -56,18 +63,22 @@
                 </div>
             </li>
             <li class="list-group-item d-none" id={{ printf "editForm%v" .Uuid }}>
-                <form action={{ .Uuid | printf "%s?_method=PUT" | printf "/post/%s/comments/%s" .PostUuid }} method="POST">
+                <form action={{ .Uuid | printf "%s?_method=PUT" | printf "/post/%s/comments/%s" .PostUuid }}
+                    method="POST">
                     <div class="row mb-3">
                         <div class="col-2">
                             <div>
-                                <label for={{ .Uuid | printf "username%v" }} class="col-form-label visually-hidden"></label>
-                                <input type="text" name="comment[username]" id={{ .Uuid | printf "username%v" }} class="form-control"
-                                    placeholder="Name" aria-label="Name" value={{ .Username }} disabled>
+                                <label for={{ .Uuid | printf "username%v" }}
+                                    class="col-form-label visually-hidden"></label>
+                                <input type="text" name="comment[username]" id={{ .Uuid | printf "username%v" }}
+                                    class="form-control" placeholder="Name" aria-label="Name" value={{ .Username }}
+                                    disabled>
                                 <div class="valid-feedback">
                                 </div>
                             </div>
                             <div>
-                                <label for={{ printf "password%v" .Uuid }} class="col-form-label visually-hidden"></label>
+                                <label for={{ printf "password%v" .Uuid }}
+                                    class="col-form-label visually-hidden"></label>
                                 <input type="password" name="comment[password]" id={{ printf "password%v" .Uuid }}
                                     class="form-control my-2" placeholder="Password" aria-label="Password" required>
                                 <div class="valid-feedback">
@@ -75,9 +86,11 @@
                             </div>
                         </div>
                         <div class="col-10">
-                            <label for={{ printf "commentTextArea%v" .Uuid }} class="form-label visually-hidden"></label>
-                            <textarea class="form-control" name="comment[body]" id={{ printf "commentTextArea%v" .Uuid }}
-                                rows="3" placeholder="Comment" required>{{ .Body }}</textarea>
+                            <label for={{ printf "commentTextArea%v" .Uuid }}
+                                class="form-label visually-hidden"></label>
+                            <textarea class="form-control" name="comment[body]"
+                                id={{ printf "commentTextArea%v" .Uuid }} rows="3" placeholder="Comment"
+                                required>{{ .Body }}</textarea>
                             <div class="valid-feedback">
                             </div>
                         </div>
@@ -90,7 +103,7 @@
                 </form>
             </li>
             <div class="modal fade" id={{ .Uuid | printf "deleteCommentModel%s" }} tabindex="-1"
-            aria-labelledby="deleteCommentModel" aria-hidden="true">
+                aria-labelledby="deleteCommentModel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -98,7 +111,9 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action={{ .Uuid | printf "%s?_method=DELETE" | printf "/post/%s/comments/%s" .PostUuid }} method="POST">
+                            <form
+                                action={{ .Uuid | printf "%s?_method=DELETE" | printf "/post/%s/comments/%s" .PostUuid }}
+                                method="POST">
                                 <div class="mb-3">
                                     <label for="commentPassword" class="col-form-label">Please provide the password to
                                         delete the comment
@@ -115,8 +130,8 @@
                         </div>
                     </div>
                 </div>
-            </div> 
-        {{ end }}
+            </div>
+            {{ end }}
         </ul>
     </div>
     <div class="col-lg-10 mb-3">
@@ -140,8 +155,8 @@
                 </div>
                 <div class="col-10">
                     <label for="commentTextArea" class="form-label visually-hidden"></label>
-                    <textarea class="form-control" name="comment[body]" id="commentTextArea" rows="3" placeholder="Comment"
-                        required></textarea>
+                    <textarea class="form-control" name="comment[body]" id="commentTextArea" rows="3"
+                        placeholder="Comment" required></textarea>
                     <div class="valid-feedback">
                     </div>
                 </div>

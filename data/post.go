@@ -16,6 +16,8 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
+const PostPerPage = 5
+
 type Post struct {
 	Id        int
 	Uuid      string
@@ -74,8 +76,8 @@ func (post *Post) SanitizedContent() string {
 }
 
 // Get all Posts in the database and returns it
-func Posts() (posts []Post, err error) {
-	rows, err := db.Query("SELECT id, uuid, title, category, content, created_at FROM posts ORDER BY created_at DESC")
+func Posts(page int) (posts []Post, err error) {
+	rows, err := db.Query("SELECT id, uuid, title, category, content, created_at FROM posts ORDER BY created_at DESC LIMIT $1 OFFSET $2", PostPerPage, page*PostPerPage)
 	if err != nil {
 		return
 	}
@@ -135,8 +137,8 @@ func DeletePost(uuid string) (err error) {
 }
 
 // Get Posts by Category
-func PostsByCategory(category string) (posts []Post, err error) {
-	rows, err := db.Query("SELECT id, uuid, title, category, content, created_at FROM posts WHERE $1=any(category) ORDER BY created_at DESC", category)
+func PostsByCategory(category string, page int) (posts []Post, err error) {
+	rows, err := db.Query("SELECT id, uuid, title, category, content, created_at FROM posts WHERE $1=any(category) ORDER BY created_at DESC LIMIT $2 OFFSET $3", category, PostPerPage, PostPerPage*page)
 	if err != nil {
 		return
 	}
