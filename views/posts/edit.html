@@ -16,6 +16,18 @@
             required>
     </div>
     <div class="mb-3">
+        <div>Load Template</div>
+        <div class="d-flex">
+            <button type="button" class="btn btn-sm btn-light template mx-1" id="dailylog-template">Daily
+                Log</button>
+            <button type="button" class="btn btn-sm btn-light template mx-1" id="leetcode-template">LeetCode</button>
+            <button type="button" class="btn btn-sm btn-light template mx-1" id="projecteuler-template">Project
+                Euler</button>
+            <button type="button" class="btn btn-sm btn-light template mx-1"
+                id="programmers-template">Programmers</button>
+        </div>
+    </div>
+    <div class="mb-3">
         <label for="image" class="form-label">Upload image(s)...<input id="my-file-selector" type="file"
                 style="display:none;" onchange="$('#upload-file-info').val($(this).val());"></label>
         <input class="form-control" type="file" id="image" name="image" multiple data-show-upload="true"
@@ -50,7 +62,14 @@
 
 </form>
 <script>
-    const simplemde = new SimpleMDE({ initialValue: {{ .Post.Content }} });
+    const simplemde = new SimpleMDE({
+        renderingConfig: {
+            singleLineBreaks: false,
+            codeSyntaxHighlighting: true,
+        },
+        initialValue: {{ .Post.Content }} 
+    });
 </script>
 <script src="/static/js/displayPreview.js"></script>
+<script src="/static/js/loadTemplate.js"></script>
 {{ end }}
