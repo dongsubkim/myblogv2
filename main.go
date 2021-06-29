@@ -44,7 +44,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, path.Join("views", "favicon.ico"))
+		http.ServeFile(w, r, path.Join("views", "static", "favicon.ico"))
 	})
 
 	workDir, _ := os.Getwd()

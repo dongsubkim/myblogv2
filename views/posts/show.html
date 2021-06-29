@@ -12,6 +12,7 @@
         <p class="text-muted">Category: {{ .Post.PopulateCategory }} </p>
         <p>{{ .Post.ParseContent }}</p>
         <p class="text-muted"> Last Modified: {{ .Post.CreatedAtDate }}</p>
+        {{ if .Authorized }}
         <div class="d-flex justify-content-between">
             <div>
                 <div class="btn btn-sm btn-secondary" onclick="history.back()">Back</div>
@@ -22,7 +23,9 @@
                 <button class="btn btn-danger btn-sm">Delete</button>
             </form>
         </div>
-
+        {{ else }}
+        <div class="btn btn-sm btn-secondary" onclick="history.back()">Back</div>
+        {{ end }}
     </div>
     <!-- Comment Section -->
     <div class="col-lg-10 mb-3">
