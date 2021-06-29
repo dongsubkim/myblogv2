@@ -49,12 +49,10 @@ projecteuler.addEventListener("click", function () {
     title.value = `[Project Euler] P0${n}. `;
     category.value = "Project Euler";
     simplemde.value(`# Problem ${n} 
-## [
+#
 
 # Check my solution in [Jupyter Notebook](${url})
-
-*Copied from https://github.com/dongsubkim/dailylog/issues/${n - 8}*`
-    ); // Returns HTML from a custom parser
+`); // Returns HTML from a custom parser
 })
 programmers.addEventListener("click", function () {
     title.value = "[Programmers]";
