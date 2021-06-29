@@ -36,16 +36,26 @@ leetcode.addEventListener("click", function () {
 *Copied from https://github.com/dongsubkim/dailylog/issues/ *`)
 })
 projecteuler.addEventListener("click", function () {
-    title.value = "[Project Euler] P0";
+    let n = title.value;
+    let url = "";
+    if (n <= 50) {
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem001-050/problem${n}.ipynb`
+    } else if (n <= 100) {
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem051-100/problem${n}.ipynb`
+    } else {
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem101-150/p${n}.ipynb`
+    }
+
+    title.value = `[Project Euler] P0${n}.`;
     category.value = "Project Euler";
-    simplemde.value(`# Problem 
-## []()
+    simplemde.value(`# Problem ${n}
+## [](https://projecteuler.net/problem=${n})
 
 ![](http://)
 
-# Check my solution in [Jupyter Notebook]()
+# Check my solution in [Jupyter Notebook](${url})
 
-*Copied from https://github.com/dongsubkim/dailylog/issues/ *`
+*Copied from https://github.com/dongsubkim/dailylog/issues/${n - 12} *`
     ); // Returns HTML from a custom parser
 })
 programmers.addEventListener("click", function () {
