@@ -141,6 +141,7 @@ func Admins() (admins []Admin, err error) {
 	if err != nil {
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		admin := Admin{}
 		if err = rows.Scan(&admin.Id, &admin.Uuid, &admin.Name, &admin.Email, &admin.Password, &admin.CreatedAt); err != nil {
@@ -148,7 +149,6 @@ func Admins() (admins []Admin, err error) {
 		}
 		admins = append(admins, admin)
 	}
-	rows.Close()
 	return
 }
 

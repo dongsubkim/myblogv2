@@ -26,6 +26,7 @@ func (post *Post) Comments() (comments []Comment, err error) {
 	if err != nil {
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		comment := Comment{}
 		if err = rows.Scan(&comment.Id, &comment.Uuid, &comment.Username, &comment.Body, &comment.PostUuid, &comment.CreatedAt); err != nil {
@@ -33,7 +34,6 @@ func (post *Post) Comments() (comments []Comment, err error) {
 		}
 		comments = append(comments, comment)
 	}
-	rows.Close()
 	return
 }
 
@@ -50,7 +50,11 @@ func CreateComment(username, password, body, postUuid string) (err error) {
 	if err != nil {
 		return
 	}
-	_, err = stmt.Query(uuid, username, string(hashedPassword), body, postUuid, time.Now())
+	rows, err := stmt.Query(uuid, username, string(hashedPassword), body, postUuid, time.Now())
+	if err != nil {
+		return
+	}
+	defer rows.Close()
 	return
 }
 

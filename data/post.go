@@ -81,6 +81,7 @@ func Posts(page int) (posts []Post, err error) {
 	if err != nil {
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		post := Post{}
 		if err = rows.Scan(&post.Id, &post.Uuid, &post.Title, pq.Array(&post.Category), &post.Content, &post.CreatedAt); err != nil {
@@ -88,7 +89,6 @@ func Posts(page int) (posts []Post, err error) {
 		}
 		posts = append(posts, post)
 	}
-	rows.Close()
 	return
 }
 
@@ -102,11 +102,10 @@ func CreatePost(title, categoryRaw, content string, images []*Image) (uuid strin
 	defer stmt.Close()
 	uuid = createUUID()
 	category := strings.Split(categoryRaw, ", ")
-	_, err = stmt.Query(uuid, title, pq.Array(category), content, time.Now())
+	_, err = stmt.Exec(uuid, title, pq.Array(category), content, time.Now())
 	if err != nil {
 		return
 	}
-
 	err = insertImages(images, uuid)
 	return
 }
@@ -142,6 +141,7 @@ func PostsByCategory(category string, page int) (posts []Post, err error) {
 	if err != nil {
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		post := Post{}
 		if err = rows.Scan(&post.Id, &post.Uuid, &post.Title, pq.Array(&post.Category), &post.Content, &post.CreatedAt); err != nil {
@@ -149,7 +149,6 @@ func PostsByCategory(category string, page int) (posts []Post, err error) {
 		}
 		posts = append(posts, post)
 	}
-	rows.Close()
 	return
 }
 
@@ -168,6 +167,7 @@ func UpdateCategory() (category map[string]int, err error) {
 	if err != nil {
 		return
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var cat string
 		var count int
@@ -176,6 +176,5 @@ func UpdateCategory() (category map[string]int, err error) {
 		}
 		category[cat] = count
 	}
-	rows.Close()
 	return
 }
