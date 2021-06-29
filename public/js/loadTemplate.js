@@ -36,26 +36,28 @@ leetcode.addEventListener("click", function () {
 *Copied from https://github.com/dongsubkim/dailylog/issues/*`)
 })
 projecteuler.addEventListener("click", function () {
-    // let n = title.value;
-    let n = parseInt(simplemde.value().split("\n")[0].slice(10));
+    let n = title.value;
+    // let n = parseInt(simplemde.value().split("\n")[0].slice(10));
 
     let url = "";
-    if (n <= 50) {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem001-050/problem${n}.ipynb`
-    } else if (n <= 100) {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem051-100/problem${n}.ipynb`
+    if (n % 100 <= 50 && n % 10 != 0) {
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${n / 100}01-${n / 100}50/p${n}.ipynb`
+    } else if (n % 100 == 0) {
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${n / 100 - 1}51-${n / 100}00/p${n}.ipynb`
     } else {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem101-150/p${n}.ipynb`
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${n / 100}51-${n / 100 + 1}00/p${n}.ipynb`
     }
-
 
     if (n < 100) {
-        title.value = `[Project Euler] P0${n}. ${title.value.slice(16)}`;
+        title.value = `[Project Euler] P0${n}. `; // ${title.value.slice(16)}`;
     } else {
-        title.value = `[Project Euler] P${n}. ${title.value.slice(16)}`;
+        title.value = `[Project Euler] P${n}. `; // ${title.value.slice(16)}`;
     }
     category.value = "Project Euler";
-    simplemde.value(`${simplemde.value()}
+    simplemde.value(`# Problem ${n}
+## [](https://projecteuler.net/problem=${n})
+
+![](http://)
 
 # Check my solution in [Jupyter Notebook](${url})
 `); // Returns HTML from a custom parser
