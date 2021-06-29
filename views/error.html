@@ -3,7 +3,12 @@
 
 {{define "content"}}
 <div class="container">
-    <h1>ERROR!</h1>
-    <p>{{ .err }}</p>
+    <div class="row">
+        <h1>ERROR!</h1>
+        <p>{{ .err }}</p>
+        <div>
+            <button onclick="history.back()" class="btn btn-secondary btn-sm">back</button>
+        </div>
+    </div>
 </div>
 {{end}}

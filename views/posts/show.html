@@ -28,17 +28,17 @@
         {{ end }}
     </div>
     <!-- Comment Section -->
-    <div class="col-lg-10 mb-3">
+    <div class="mb-3">
         <h3>Comments</h3>
         <hr>
         <ul class="list-group list-group-flush">
-            {{ range .Comments }}
+            {{ range $index, $comment := .Comments }}
             <li class="list-group-item">
                 <div class="row">
                     <div class="col-11">
-                        <strong>{{ .Username }}</strong>
+                        <strong>{{ $comment.Username }}</strong>
                         <div>
-                            {{ .Body }}
+                            {{ $comment.Body }}
                         </div>
                     </div>
                     <div class="dropdown col-1">
@@ -52,12 +52,11 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li>
-                                <a href="#!" class="dropdown-item"
-                                    onclick="toggler({{ printf "editForm%v" .Uuid }})">Edit</a>
+                                <div href="#" class="dropdown-item edit-btn">Edit</div>
                             </li>
                             <li>
                                 <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                    data-bs-target={{ .Uuid | printf "#deleteCommentModel%v" }}>
+                                    data-bs-target={{ $index | printf "#deleteCommentModel%v" }}>
                                     Delete
                                 </button>
                             </li>
@@ -65,13 +64,13 @@
                     </div>
                 </div>
             </li>
-            <li class="list-group-item d-none" id={{ printf "editForm%v" .Uuid }}>
-                <form action={{ .Uuid | printf "%s?_method=PUT" | printf "/post/%s/comments/%s" .PostUuid }}
+            <li class="list-group-item d-none" id={{ $index | printf "editForm%v" }}>
+                <form action={{ $comment.Uuid | printf "%s?_method=PUT" | printf "/post/%s/comments/%s" .PostUuid }}
                     method="POST">
                     <div class="row mb-3">
                         <div class="col-2">
                             <div>
-                                <label for={{ .Uuid | printf "username%v" }}
+                                <label for={{ $comment.Uuid | printf "username%v" }}
                                     class="col-form-label visually-hidden"></label>
                                 <input type="text" name="comment[username]" id={{ .Uuid | printf "username%v" }}
                                     class="form-control" placeholder="Name" aria-label="Name" value={{ .Username }}
@@ -82,18 +81,19 @@
                             <div>
                                 <label for={{ printf "password%v" .Uuid }}
                                     class="col-form-label visually-hidden"></label>
-                                <input type="password" name="comment[password]" id={{ printf "password%v" .Uuid }}
-                                    class="form-control my-2" placeholder="Password" aria-label="Password" required>
+                                <input type="password" name="comment[password]"
+                                    id={{ printf "password%v" $comment.Uuid }} class="form-control my-2"
+                                    placeholder="Password" aria-label="Password" required>
                                 <div class="valid-feedback">
                                 </div>
                             </div>
                         </div>
                         <div class="col-10">
-                            <label for={{ printf "commentTextArea%v" .Uuid }}
+                            <label for={{ printf "commentTextArea%v" $comment.Uuid }}
                                 class="form-label visually-hidden"></label>
                             <textarea class="form-control" name="comment[body]"
-                                id={{ printf "commentTextArea%v" .Uuid }} rows="3" placeholder="Comment"
-                                required>{{ .Body }}</textarea>
+                                id={{ printf "commentTextArea%v" $comment.Uuid }} rows="3" placeholder="Comment"
+                                required>{{ $comment.Body }}</textarea>
                             <div class="valid-feedback">
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                     </div>
                 </form>
             </li>
-            <div class="modal fade" id={{ .Uuid | printf "deleteCommentModel%s" }} tabindex="-1"
+            <div class="modal fade" id={{ $index | printf "deleteCommentModel%d" }} tabindex="-1"
                 aria-labelledby="deleteCommentModel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -115,7 +115,7 @@
                         </div>
                         <div class="modal-body">
                             <form
-                                action={{ .Uuid | printf "%s?_method=DELETE" | printf "/post/%s/comments/%s" .PostUuid }}
+                                action={{ $comment.Uuid | printf "%s?_method=DELETE" | printf "/post/%s/comments/%s" .PostUuid }}
                                 method="POST">
                                 <div class="mb-3">
                                     <label for="commentPassword" class="col-form-label">Please provide the password to
@@ -137,7 +137,7 @@
             {{ end }}
         </ul>
     </div>
-    <div class="col-lg-10 mb-3">
+    <div class=" mb-3">
         <form action={{ printf "/post/%v/comments/" .Post.Uuid }} method="POST">
             <div class="row mb-3">
                 <div class="col-2">
@@ -172,15 +172,5 @@
         </form>
     </div>
 </div>
-<script>
-    function toggler(divId) {
-        const element = document.getElementById(divId);
-        element.classList.toggle("d-none");
-    }
-</script>
-<script>
-    for (const tb of document.querySelectorAll("table")) {
-        tb.classList.add("pure-table", "pure-table-bordered", "mb-3");
-    }
-</script>
+<script src="/static/js/show.js"></script>
 {{end}}
