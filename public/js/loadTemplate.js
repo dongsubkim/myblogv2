@@ -18,7 +18,7 @@ dailylog.addEventListener("click", function () {
 - Problem []()
 - [Post]()
 
-*Copied from https://github.com/dongsubkim/dailylog/issues/ *`
+*Copied from https://github.com/dongsubkim/dailylog/issues/*`
     ); // Returns HTML from a custom parser
 
 })
@@ -33,7 +33,7 @@ leetcode.addEventListener("click", function () {
 
 \`\`\` 
 
-*Copied from https://github.com/dongsubkim/dailylog/issues/ *`)
+*Copied from https://github.com/dongsubkim/dailylog/issues/*`)
 })
 projecteuler.addEventListener("click", function () {
     let n = title.value;
@@ -46,16 +46,14 @@ projecteuler.addEventListener("click", function () {
         url = `https://github.com/dongsubkim/project_euler/blob/main/problem101-150/p${n}.ipynb`
     }
 
-    title.value = `[Project Euler] P0${n}.`;
+    title.value = `[Project Euler] P0${n}. `;
     category.value = "Project Euler";
-    simplemde.value(`# Problem ${n}
-## [](https://projecteuler.net/problem=${n})
-
-![](http://)
+    simplemde.value(`# Problem ${n} 
+## [
 
 # Check my solution in [Jupyter Notebook](${url})
 
-*Copied from https://github.com/dongsubkim/dailylog/issues/${n - 8} *`
+*Copied from https://github.com/dongsubkim/dailylog/issues/${n - 8}*`
     ); // Returns HTML from a custom parser
 })
 programmers.addEventListener("click", function () {
@@ -68,5 +66,5 @@ programmers.addEventListener("click", function () {
 
 \`\`\` 
 
-*Copied from https://github.com/dongsubkim/dailylog/issues/ *`)
+*Copied from https://github.com/dongsubkim/dailylog/issues/*`)
 })
