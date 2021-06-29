@@ -37,7 +37,7 @@ leetcode.addEventListener("click", function () {
 })
 projecteuler.addEventListener("click", function () {
     // let n = title.value;
-    let n = parseInt(simplemde.value().split("\n")[0].split(8));
+    let n = parseInt(simplemde.value().split("\n")[0].slice(10));
 
     let url = "";
     if (n <= 50) {
@@ -50,13 +50,13 @@ projecteuler.addEventListener("click", function () {
 
 
     if (n < 100) {
-        title.value = `[Project Euler] P0${n}. `;
+        title.value = `[Project Euler] P0${n}. ${title.value.slice(16)}`;
     } else {
-        title.value = `[Project Euler] P${n}. `;
+        title.value = `[Project Euler] P${n}. ${title.value.slice(16)}`;
     }
     category.value = "Project Euler";
     simplemde.value(`${simplemde.value()}
-    
+
 # Check my solution in [Jupyter Notebook](${url})
 `); // Returns HTML from a custom parser
 })
