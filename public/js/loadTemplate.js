@@ -55,7 +55,7 @@ projecteuler.addEventListener("click", function () {
 
 # Check my solution in [Jupyter Notebook](${url})
 
-*Copied from https://github.com/dongsubkim/dailylog/issues/${n - 12} *`
+*Copied from https://github.com/dongsubkim/dailylog/issues/${n - 8} *`
     ); // Returns HTML from a custom parser
 })
 programmers.addEventListener("click", function () {
