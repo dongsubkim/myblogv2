@@ -36,7 +36,9 @@ leetcode.addEventListener("click", function () {
 *Copied from https://github.com/dongsubkim/dailylog/issues/*`)
 })
 projecteuler.addEventListener("click", function () {
-    let n = title.value;
+    // let n = title.value;
+    let n = parseInt(simplemde.value().split("\n")[0].split(8));
+
     let url = "";
     if (n <= 50) {
         url = `https://github.com/dongsubkim/project_euler/blob/main/problem001-050/problem${n}.ipynb`
@@ -46,11 +48,15 @@ projecteuler.addEventListener("click", function () {
         url = `https://github.com/dongsubkim/project_euler/blob/main/problem101-150/p${n}.ipynb`
     }
 
-    title.value = `[Project Euler] P0${n}. `;
-    category.value = "Project Euler";
-    simplemde.value(`# Problem ${n} 
-#
 
+    if (n < 100) {
+        title.value = `[Project Euler] P0${n}. `;
+    } else {
+        title.value = `[Project Euler] P${n}. `;
+    }
+    category.value = "Project Euler";
+    simplemde.value(`${simplemde.value()}
+    
 # Check my solution in [Jupyter Notebook](${url})
 `); // Returns HTML from a custom parser
 })
