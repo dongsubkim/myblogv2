@@ -16,9 +16,7 @@ dailylog.addEventListener("click", function () {
 
 ## Project Euler
 - Problem []()
-- [Post]()
-
-*Copied from https://github.com/dongsubkim/dailylog/issues/*`
+- [Post]()`
     ); // Returns HTML from a custom parser
 
 })
@@ -32,8 +30,7 @@ leetcode.addEventListener("click", function () {
 \`\`\`
 
 \`\`\` 
-
-*Copied from https://github.com/dongsubkim/dailylog/issues/*`)
+`)
 })
 projecteuler.addEventListener("click", function () {
     let n = title.value;
@@ -41,11 +38,11 @@ projecteuler.addEventListener("click", function () {
 
     let url = "";
     if (n % 100 <= 50 && n % 10 != 0) {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${n / 100}01-${n / 100}50/p${n}.ipynb`
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${parseInt(n / 100)}01-${parseInt(n / 100)}50/p${n}.ipynb`
     } else if (n % 100 == 0) {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${n / 100 - 1}51-${n / 100}00/p${n}.ipynb`
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${parseInt(n / 100) - 1}51-${parseInt(n / 100)}00/p${n}.ipynb`
     } else {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${n / 100}51-${n / 100 + 1}00/p${n}.ipynb`
+        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${parseInt(n / 100)}51-${parseInt(n / 100) + 1}00/p${n}.ipynb`
     }
 
     if (n < 100) {
