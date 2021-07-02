@@ -7,11 +7,21 @@ const leetcode = document.querySelector("#leetcode-template");
 const projecteuler = document.querySelector("#projecteuler-template");
 const programmers = document.querySelector("#programmers-template");
 
+let d = new Date();
 dailylog.addEventListener("click", function () {
-    title.value = "Daily Log 2021";
+    let month = d.getMonth() + 1
+    if (month < 10) {
+        month = "0" + month.toString();
+    }
+    let date = d.getDate();
+    if (date < 10) {
+        date = "0" + date.toString();
+    }
+    console.log(d);
+    title.value = `Daily Log ${d.getFullYear()}-${month}-${date}`;
     category.value = "Daily Log";
     simplemde.value(`## LeetCode
-- LeetCode Challenge 2021 []()
+- ${d.toLocaleString('en-US', { month: 'long' })} LeetCode Challenge 2021 []()
 - [Post]()
 
 ## Project Euler
@@ -21,9 +31,10 @@ dailylog.addEventListener("click", function () {
 
 })
 leetcode.addEventListener("click", function () {
-    title.value = "[LeetCode]";
+
+    title.value = "[LeetCode] ";
     category.value = "LeetCode";
-    simplemde.value(`# LeetCode Challenge 2021
+    simplemde.value(`# ${d.toLocaleString('en-US', { month: 'long' })} LeetCode Challenge 2021
 ## []()
 
 ## My solution in 
@@ -35,15 +46,11 @@ leetcode.addEventListener("click", function () {
 projecteuler.addEventListener("click", function () {
     let n = title.value;
     // let n = parseInt(simplemde.value().split("\n")[0].slice(10));
-
-    let url = "";
-    if (n % 100 <= 50 && n % 10 != 0) {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${parseInt(n / 100)}01-${parseInt(n / 100)}50/p${n}.ipynb`
-    } else if (n % 100 == 0) {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${parseInt(n / 100) - 1}51-${parseInt(n / 100)}00/p${n}.ipynb`
-    } else {
-        url = `https://github.com/dongsubkim/project_euler/blob/main/problem${parseInt(n / 100)}51-${parseInt(n / 100) + 1}00/p${n}.ipynb`
+    let q = parseInt(n / 50);
+    if (n % 50 == 0) {
+        q--;
     }
+    let url = `https://github.com/dongsubkim/project_euler/blob/main/problem${q * 50 + 1}-${(q + 1) * 50}/p${n}.ipynb`;
 
     if (n < 100) {
         title.value = `[Project Euler] P0${n}. `; // ${title.value.slice(16)}`;
@@ -60,7 +67,7 @@ projecteuler.addEventListener("click", function () {
 `); // Returns HTML from a custom parser
 })
 programmers.addEventListener("click", function () {
-    title.value = "[Programmers]";
+    title.value = "[Programmers] ";
     category.value = "Programmers";
     simplemde.value(`## []()
 
