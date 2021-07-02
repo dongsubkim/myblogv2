@@ -13,7 +13,9 @@
                 <a href={{ printf "/post/%v" .Uuid }} class="card-link mt-auto">View post</a>
             </div>
             <div class="d-none d-md-block col-md-3 align-self-center mb-3 ps-3">
+                {{ if .ThumbnailImage }}
                 <img src={{ .ThumbnailImage }} class="img-fluid" alt="">
+                {{ end }}
             </div>
         </div>
     </div>
