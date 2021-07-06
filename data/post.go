@@ -2,6 +2,7 @@ package data
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -132,6 +133,25 @@ func DeletePost(uuid string) (err error) {
 		return
 	}
 	_, err = db.Exec("delete from posts where uuid = $1", uuid)
+	return
+}
+
+// Get Posts by Search
+func PostsBySearch(query string, page int) (posts []Post, err error) {
+	var stmt = `SELECT id, uuid, title, category, content, created_at FROM posts WHERE title LIKE '%` + query + `%' ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+	fmt.Println(stmt)
+	rows, err := db.Query(stmt, PostPerPage, PostPerPage*page)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		post := Post{}
+		if err = rows.Scan(&post.Id, &post.Uuid, &post.Title, pq.Array(&post.Category), &post.Content, &post.CreatedAt); err != nil {
+			return
+		}
+		posts = append(posts, post)
+	}
 	return
 }
 

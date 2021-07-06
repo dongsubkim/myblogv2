@@ -51,7 +51,11 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 	} else {
 		page = 0
 	}
-	if categories, ok := r.URL.Query()["category"]; ok {
+
+	if queries, ok := r.URL.Query()["search"]; ok {
+		var query = queries[0]
+		posts, err = data.PostsBySearch(query, page)
+	} else if categories, ok := r.URL.Query()["category"]; ok {
 		category = categories[0]
 		posts, err = data.PostsByCategory(category, page)
 	} else {
@@ -61,6 +65,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		error_message(w, r, fmt.Sprintf("Cannot get posts: %v!", err))
 		return
 	}
+
 	err = goview.Render(w, http.StatusOK, "posts/index", goview.M{
 		"Posts":          &posts,
 		"CategoryNavbar": &CategoryNavbar,

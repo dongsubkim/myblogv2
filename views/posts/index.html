@@ -21,38 +21,47 @@
     </div>
     <hr>
     {{ end }}
-    {{ if or (not .IsFirst) (not .IsLast)}}
     <nav aria-label="Page navigation example">
-        <ul class="pagination d-flex justify-content-center">
-            {{ if .IsFirst }}
-            <li class="page-item disabled">
-                <a class="page-link" href="#">Prev
-                </a>
-            </li>
-            {{ else if .Category }}
-            <li class="page-item"><a class="page-link"
-                    href={{ print "/post?category=" .Category "&page=" (call $.add .Page -1) }}>Prev
-                </a></li>
-            {{ else }}
-            <li class="page-item"><a class="page-link" href={{ print "/post?page=" (call $.add .Page -1) }}>Prev
-                </a></li>
-            {{ end }}
-            {{ if .IsLast }}
-            <li class="page-item disabled">
-                <a class="page-link" href="#">Next
-                </a>
-            </li>
-            {{ else if .Category }}
-            <li class="page-item"><a class="page-link"
-                    href={{ print "/post?category=" .Category "&page=" (call $.add .Page 1) }}>Next
-                </a></li>
-            {{ else }}
-            <li class="page-item"><a class="page-link" href={{ print "/post?page=" (call $.add .Page 1) }}>Next
-                </a></li>
-            {{ end }}
-        </ul>
+        <div class="d-flex justify-content-between">
+            <div></div>
+            <ul class="pagination">
+                {{ if .IsFirst }}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">Prev
+                    </a>
+                </li>
+                {{ else if .Category }}
+                <li class="page-item"><a class="page-link"
+                        href={{ print "/post?category=" .Category "&page=" (call $.add .Page -1) }}>Prev
+                    </a></li>
+                {{ else }}
+                <li class="page-item"><a class="page-link" href={{ print "/post?page=" (call $.add .Page -1) }}>Prev
+                    </a></li>
+                {{ end }}
+                {{ if .IsLast }}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">Next
+                    </a>
+                </li>
+                {{ else if .Category }}
+                <li class="page-item"><a class="page-link"
+                        href={{ print "/post?category=" .Category "&page=" (call $.add .Page 1) }}>Next
+                    </a></li>
+                {{ else }}
+                <li class="page-item"><a class="page-link" href={{ print "/post?page=" (call $.add .Page 1) }}>Next
+                    </a></li>
+                {{ end }}
+            </ul>
+            <div>
+                <form class="d-flex" action="/post">
+                    <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search"
+                        aria-label="Search">
+                    <button class="btn btn-outline-primary" type="button" id="btn-search">Search</button>
+                </form>
+            </div>
+        </div>
     </nav>
-    {{end}}
-
 </div>
+
+<script src="/static/js/index.js"></script>
 {{end}}
