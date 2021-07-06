@@ -34,6 +34,10 @@
                 <li class="page-item"><a class="page-link"
                         href={{ print "/post?category=" .Category "&page=" (call $.add .Page -1) }}>Prev
                     </a></li>
+                {{ else if .Query }}
+                <li class="page-item"><a class="page-link"
+                        href={{ print "/post?search=" .Query "&page=" (call $.add .Page -1) }}>Prev
+                    </a></li>
                 {{ else }}
                 <li class="page-item"><a class="page-link" href={{ print "/post?page=" (call $.add .Page -1) }}>Prev
                     </a></li>
@@ -46,6 +50,10 @@
                 {{ else if .Category }}
                 <li class="page-item"><a class="page-link"
                         href={{ print "/post?category=" .Category "&page=" (call $.add .Page 1) }}>Next
+                    </a></li>
+                {{ else if .Query }}
+                <li class="page-item"><a class="page-link"
+                        href={{ print "/post?search=" .Query "&page=" (call $.add .Page 1) }}>Prev
                     </a></li>
                 {{ else }}
                 <li class="page-item"><a class="page-link" href={{ print "/post?page=" (call $.add .Page 1) }}>Next

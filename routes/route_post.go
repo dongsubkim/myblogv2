@@ -43,6 +43,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var page int
 	var category string
+	var query string
 	if p, ok := r.URL.Query()["page"]; ok {
 		page, err = strconv.Atoi(p[0])
 		if err != nil {
@@ -53,7 +54,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if queries, ok := r.URL.Query()["search"]; ok {
-		var query = queries[0]
+		query = queries[0]
 		posts, err = data.PostsBySearch(query, page)
 	} else if categories, ok := r.URL.Query()["category"]; ok {
 		category = categories[0]
@@ -74,6 +75,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 		"IsLast":         len(posts) < data.PostPerPage,
 		"Page":           page,
 		"Category":       category,
+		"Query":          query,
 		"Partials":       []string{"posts/index"},
 		"add": func(a int, b int) int {
 			return a + b
