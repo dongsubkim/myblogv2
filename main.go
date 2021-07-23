@@ -55,6 +55,10 @@ func main() {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/post", http.StatusFound)
 		})
+
+		r.Get("/resume", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "https://speckle-neem-ab4.notion.site/Resum-2e037c557c8744eab426fec030a2d79f", http.StatusPermanentRedirect)
+		})
 	})
 
 	r.Route("/post", routes.PostRouter)
