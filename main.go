@@ -50,6 +50,7 @@ func main() {
 	workDir, _ := os.Getwd()
 	filesDir := http.Dir(filepath.Join(workDir, "public"))
 	FileServer(r, "/static", filesDir)
+	resumeLink := os.Getenv("RESUME_LINK")
 
 	r.Route("/", func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +58,7 @@ func main() {
 		})
 
 		r.Get("/resume", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "https://speckle-neem-ab4.notion.site/Resum-2e037c557c8744eab426fec030a2d79f", http.StatusPermanentRedirect)
+			http.Redirect(w, r, resumeLink, http.StatusPermanentRedirect)
 		})
 	})
 
