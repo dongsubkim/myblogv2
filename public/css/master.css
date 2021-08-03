@@ -2,3 +2,21 @@ a {
     text-decoration: none;
     text-decoration-color: rgb(3, 102, 214);
 }
+
+@font-face {
+    font-family: 'Nanum Square';
+    src: url('../fonts/NanumSquareRoundB.ttf');
+}
+
+@font-face {
+    font-family: face;
+    src: url();
+}
+
+body {
+    font-family: 'Nanum Square', sans-serif;
+}
+
+pre, code {
+    font-family: 'JetBrains Mono', monospace !important;
+}
