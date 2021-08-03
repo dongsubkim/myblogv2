@@ -4,17 +4,19 @@ a {
 }
 
 @font-face {
-    font-family: 'Nanum Square';
+    font-family: 'Nanum Square Round';
+    font-weight: 400;
     src: url('../fonts/NanumSquareRoundB.ttf');
 }
 
 @font-face {
-    font-family: face;
-    src: url();
+    font-family: 'Nanum Square Round';
+    font-weight: 700;
+    src: url('../fonts/NanumSquareRoundEB.ttf');
 }
 
 body {
-    font-family: 'Nanum Square', sans-serif;
+    font-family: 'Nanum Square Round', sans-serif;
 }
 
 pre, code {
