@@ -16,8 +16,18 @@ img {
     height: auto; 
 }
 
-pre {
-    padding: 16px;
-    background-color: #f6f8fa !important;
+pre, code {
+    background-color: #f6f8fa !important; 
     border-radius: 6px;
+    margin: 0;
+    padding: .2em .4em;
 } 
+
+code {
+    font-size: 85% !important;
+}
+
+p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
