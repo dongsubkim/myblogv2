@@ -22,3 +22,7 @@ body {
 pre, code {
     font-family: 'JetBrains Mono', monospace !important;
 }
+
+.sidebar-top {
+    flex-direction: column;
+}
